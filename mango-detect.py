@@ -331,9 +331,9 @@ def main():
     )
     
     print(f"\nStarting training with {len(valid_annotations)} images...")
-    train_model(model, data_loader, optimizer, device, num_epochs=20)
+    train_model(model, data_loader, optimizer, device, num_epochs=1)
     
-    torch.save(model.state_dict(), 'mango_detection_model.pth')
+    torch.save(model.state_dict(), 'mango_detection_model_1.pth')
     
     visualize_predictions(model, dataset, device)
 

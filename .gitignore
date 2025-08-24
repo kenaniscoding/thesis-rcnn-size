@@ -3,3 +3,5 @@
 !.gitignore
 !README.md
 !mango-detect.py
+!batch-test-mango.py
+!test_mango_detection.py
