@@ -1,4 +1,4 @@
-import os, json, cv2, torch, torchvision
+import os, json, cv2, torch, torchvision, sys
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
@@ -263,7 +263,7 @@ def visualize_predictions(model, dataset, device, num_samples=3):
     plt.show()
 
 # Main training pipeline
-def main():
+def main2():
     annotations = {'ripe_only':"annotations.xml",
                    'both': "Annotations_color_bruise.xml"}
     parser = CVATAnnotationParser(annotations['both'])
@@ -331,11 +331,21 @@ def main():
     )
     
     print(f"\nStarting training with {len(valid_annotations)} images...")
-    train_model(model, data_loader, optimizer, device, num_epochs=1)
+    train_model(model, data_loader, optimizer, device, num_epochs=30)
     
-    torch.save(model.state_dict(), 'mango_detection_model_1.pth')
+    torch.save(model.state_dict(), 'mango_detection_model_30.pth')
     
     visualize_predictions(model, dataset, device)
+
+def main():
+    # CHANGE ME
+    log_path = os.path.join("logs", "mobilenet-logs-30.txt")
+    with open(log_path, "w") as f:
+        sys.stdout = f
+        main2()
+        
+    sys.stdout = sys.__stdout__
+    print(f"Training log saved to: {log_path}")
 
 if __name__ == "__main__":
     main()
