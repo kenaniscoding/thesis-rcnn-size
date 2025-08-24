@@ -1,0 +1,17 @@
+Labels found:
+  0: bruised
+  1: not_bruised
+  2: yellow
+  3: green_yellow
+  4: green
+  5: mango
+
+Total images: 488
+Valid images found: 488
+Using Faster R-CNN MobileNetV3-Large-FPN - Fastest, lowest memory
+
+Starting training with 488 images...
+Epoch 1/1, Batch 0, Loss: 2.9412
+Epoch 1/1, Batch 10, Loss: 1.2936
+Epoch 1/1, Batch 20, Loss: 2.0883
+Epoch 1/1, Batch 30, Loss: 1.0208

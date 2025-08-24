@@ -337,18 +337,8 @@ def main2():
     
     visualize_predictions(model, dataset, device)
 
-def main():
-    # CHANGE ME
-    log_path = os.path.join("logs", "mobilenet-logs-30.txt")
-    with open(log_path, "w") as f:
-        sys.stdout = f
-        main2()
-        
-    sys.stdout = sys.__stdout__
-    print(f"Training log saved to: {log_path}")
-
 if __name__ == "__main__":
-    main()
+    main2()
 
 # Additional utility functions for inference
 # def load_trained_model(model_path, num_classes):

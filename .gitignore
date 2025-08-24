@@ -6,4 +6,5 @@
 !batch-test-mango.py
 !test_mango_detection.py
 !logs
-!mobilenet-logs.txt
+!mobilenet-logs-1.txt
+!mobilenet-logs-30.txt
