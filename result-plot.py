@@ -16,18 +16,23 @@ data = {
 # Convert to DataFrame
 df = pd.DataFrame(data)
 
+# Calculate percent differences
+df["V1 Length % Diff"] = ((df["V1 Length"] - df["GT Length"]) / df["GT Length"]) * 100
+df["V2 Length % Diff"] = ((df["V2 Length"] - df["GT Length"]) / df["GT Length"]) * 100
+df["V1 Width % Diff"] = ((df["V1 Width"] - df["GT Width"]) / df["GT Width"]) * 100
+df["V2 Width % Diff"] = ((df["V2 Width"] - df["GT Width"]) / df["GT Width"]) * 100
+
 # Create sample indices
 x = np.arange(len(df))
 width = 0.25  # Width of bars
 
 # Plot Length comparison as bar graph
 plt.figure(figsize=(12, 6))
-plt.bar(x - width, df["GT Length"], width, label="Ground Truth", alpha=0.8)
-plt.bar(x, df["V2 Length"], width, label="V2 Code", alpha=0.8)
-plt.bar(x + width, df["V1 Length"], width, label="V1 Code", alpha=0.8)
-
+plt.bar(x - width, abs(df["GT Length"]), width, label="Ground Truth", alpha=0.8)
+plt.bar(x, abs(df["V2 Length"]), width, label="V2 Code", alpha=0.8)
+plt.bar(x + width, abs(df["V1 Length"]), width, label="V1 Code", alpha=0.8)
 plt.title("Length Comparison")
-plt.xlabel("Sample Index")
+plt.xlabel("Mango Index")
 plt.ylabel("Length (cm)")
 plt.xticks(x, range(len(df)))
 plt.legend()
@@ -37,15 +42,51 @@ plt.show()
 
 # Plot Width comparison as bar graph
 plt.figure(figsize=(12, 6))
-plt.bar(x - width, df["GT Width"], width, label="Ground Truth", alpha=0.8)
-plt.bar(x, df["V2 Width"], width, label="V2 Code", alpha=0.8)
-plt.bar(x + width, df["V1 Width"], width, label="V1 Code", alpha=0.8)
-
+plt.bar(x - width, abs(df["GT Width"]), width, label="Ground Truth", alpha=0.8)
+plt.bar(x, abs(df["V2 Width"]), width, label="V2 Code", alpha=0.8)
+plt.bar(x + width, abs(df["V1 Width"]), width, label="V1 Code", alpha=0.8)
 plt.title("Width Comparison")
-plt.xlabel("Sample Index")
+plt.xlabel("Mango Index")
 plt.ylabel("Width (cm)")
 plt.xticks(x, range(len(df)))
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
+
+# Plot Length Percent Difference
+plt.figure(figsize=(12, 6))
+plt.bar(x - width/2, abs(df["V2 Length % Diff"]), width, label="V2 Code", alpha=0.8, color='orange')
+plt.bar(x + width/2, abs(df["V1 Length % Diff"]), width, label="V1 Code", alpha=0.8, color='green')
+plt.axhline(y=0, color='black', linestyle='--', alpha=0.5)
+plt.title("Length Percent Difference from Ground Truth")
+plt.xlabel("Mango Index")
+plt.ylabel("Percent Difference (%)")
+plt.xticks(x, range(len(df)))
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# Plot Width Percent Difference
+plt.figure(figsize=(12, 6))
+plt.bar(x - width/2, abs(df["V2 Width % Diff"]), width, label="V2 Code", alpha=0.8, color='orange')
+plt.bar(x + width/2, abs(df["V1 Width % Diff"]), width, label="V1 Code", alpha=0.8, color='green')
+plt.axhline(y=0, color='black', linestyle='--', alpha=0.5)
+plt.title("Width Percent Difference from Ground Truth")
+plt.xlabel("Mango Index")
+plt.ylabel("Percent Difference (%)")
+plt.xticks(x, range(len(df)))
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.tight_layout()
+plt.show()
+
+# Print summary statistics
+print("Length Absolute Percent Difference Summary:")
+print(f"V1 Code - Mean: {df['V1 Length % Diff'].mean():.2f}%, Std: {df['V1 Length % Diff'].std():.2f}%")
+print(f"V2 Code - Mean: {df['V2 Length % Diff'].mean():.2f}%, Std: {df['V2 Length % Diff'].std():.2f}%")
+
+print("\nWidth Absolute Percent Difference Summary:")
+print(f"V1 Code - Mean: {df['V1 Width % Diff'].mean():.2f}%, Std: {df['V1 Width % Diff'].std():.2f}%")
+print(f"V2 Code - Mean: {df['V2 Width % Diff'].mean():.2f}%, Std: {df['V2 Width % Diff'].std():.2f}%")
