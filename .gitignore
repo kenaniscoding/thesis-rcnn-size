@@ -8,3 +8,5 @@
 !logs
 !mobilenet-logs-1.txt
 !mobilenet-logs-30.txt
+!plot2.py
+!plot3.py
