@@ -193,6 +193,7 @@ def get_model(num_classes, model_type='resnet50'):
     
     return model
 
+""" 
 def train_model(model, data_loader, optimizer, device, num_epochs=10):
     model.train()
     
@@ -216,7 +217,47 @@ def train_model(model, data_loader, optimizer, device, num_epochs=10):
             if batch_idx % 10 == 0:
                 print(f'Epoch {epoch+1}/{num_epochs}, Batch {batch_idx}, Loss: {losses.item():.4f}')
         
-        print(f'Epoch {epoch+1} Average Loss: {epoch_loss/len(data_loader):.4f}')
+        print(f'Epoch {epoch+1} Average Loss: {epoch_loss/len(data_loader):.4f}' )
+"""
+
+def train_model(model, data_loader, optimizer, device, num_epochs=10, patience=3):
+    model.train()
+    best_loss = float('inf')
+    epochs_no_improve = 0
+
+    for epoch in range(num_epochs):
+        epoch_loss = 0
+        for batch_idx, (images, targets) in enumerate(data_loader):
+            images = [img.to(device) for img in images]
+            targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+            
+            # Forward pass
+            loss_dict = model(images, targets)
+            losses = sum(loss for loss in loss_dict.values())
+            
+            # Backward pass
+            optimizer.zero_grad()
+            losses.backward()
+            optimizer.step()
+            
+            epoch_loss += losses.item()
+            
+            if batch_idx % 10 == 0:
+                print(f'Epoch {epoch+1}/{num_epochs}, Batch {batch_idx}, Loss: {losses.item():.4f}')
+        
+        avg_loss = epoch_loss / len(data_loader)
+        print(f'Epoch {epoch+1} Average Loss: {avg_loss:.4f}')
+
+        # Early stopping logic
+        if avg_loss < best_loss:
+            best_loss = avg_loss
+            epochs_no_improve = 0
+        else:
+            epochs_no_improve += 1
+            print(f'No improvement for {epochs_no_improve} epoch(s).')
+            if epochs_no_improve >= patience:
+                print(f'Early stopping triggered after {epoch+1} epochs.')
+                break
 
 def visualize_predictions(model, dataset, device, num_samples=3):
     model.eval()
@@ -312,7 +353,7 @@ def main():
     
     data_loader = DataLoader(
         dataset, 
-        batch_size=2, 
+        batch_size=4, 
         shuffle=True, 
         collate_fn=lambda x: tuple(zip(*x))
     )
@@ -331,45 +372,11 @@ def main():
     )
     
     print(f"\nStarting training with {len(valid_annotations)} images...")
-    train_model(model, data_loader, optimizer, device, num_epochs=10)
+    train_model(model, data_loader, optimizer, device, num_epochs=100)
     
-    torch.save(model.state_dict(), 'mango_detection_model.pth')
+    torch.save(model.state_dict(), 'mango_detection_model_more_stop.pth')
     
     visualize_predictions(model, dataset, device)
 
 if __name__ == "__main__":
     main()
-
-# Additional utility functions for inference
-# def load_trained_model(model_path, num_classes):
-#     """Load a trained model for inference"""
-#     model = get_model(num_classes, 'mobilenet')
-#     model.load_state_dict(torch.load(model_path))
-#     model.eval()
-#     return model
-#
-# def predict_image(model, image_path, device, confidence_threshold=0.5):
-#     """Make predictions on a single image"""
-#     # Load and preprocess image
-#     image = cv2.imread(image_path)
-#     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-#     image_tensor = torch.tensor(image).permute(2, 0, 1).float() / 255.0
-#
-#     # Make prediction
-#     model.eval()
-#     with torch.no_grad():
-#         prediction = model([image_tensor.to(device)])
-#
-#     # Filter predictions by confidence
-#     boxes = prediction[0]['boxes'].cpu().numpy()
-#     scores = prediction[0]['scores'].cpu().numpy()
-#     labels = prediction[0]['labels'].cpu().numpy()
-#
-#     # Keep only confident predictions
-#     keep = scores >= confidence_threshold
-#
-#     return {
-#         'boxes': boxes[keep],
-#         'scores': scores[keep],
-#         'labels': labels[keep]
-#     }
